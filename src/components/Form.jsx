@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const Form = () => {
-  const [data, setData] = useState({age: '', height: '', weight: '' })
-  const [inputVal, setInputVal] = useState()
+  const [data, setData] = useState({age: '', height: '', weight: ''})
+  const [individual, setIndividual] = useState([])
   const calculateBmi = (height, weight) => {
     let bmi 
     height = (height / 39.37)
     weight = (weight / 2.205)
-
+ 
     bmi = (weight / (height * height)) 
-    console.log(bmi) 
+    console.log(Math.round(bmi * 10) / 10) 
   }
 
   const handleChange = (event) => {
@@ -24,8 +24,10 @@ export const Form = () => {
 
 const handleSubmit = (event) => {
   event.preventDefault()
-  console.log("Submitted Data:", formData)
-
+  console.log("Submitted Data:", data)
+  calculateBmi(data.height, data.weight)
+  setIndividual(prevList => [...prevList, data])
+  console.log(individual)
 }
   return (
     <>
@@ -40,7 +42,7 @@ const handleSubmit = (event) => {
         </div>
         <div className="col-md-6">
           <label htmlFor="inputPassword4" className="form-label">Height</label>
-          <input type="number" className="form-control" id="inputPassword4" placeholder="Enter Height(In Inches)"
+          <input type="number" className="form-control" id="inputPassword4"     placeholder="Enter Height(In Inches)"
                 name='height'
                 value={data.height} 
                 onChange={handleChange}  
