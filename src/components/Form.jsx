@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const Form = () => {
-  const [data, setData] = useState({age: '', height: '', weight: ''})
+  const [data, setData] = useState({age: '', height: '', weight: '', bmi: ''})
   const [individual, setIndividual] = useState([])
   const calculateBmi = (height, weight) => {
     let bmi 
@@ -11,23 +11,36 @@ export const Form = () => {
     weight = (weight / 2.205)
  
     bmi = (weight / (height * height)) 
-    console.log(Math.round(bmi * 10) / 10) 
+    let roundedBmi = Math.round(bmi * 10) / 10 
+    return roundedBmi
   }
 
   const handleChange = (event) => {
     const { name, value } = event.target; 
-    setData((prevData) => ({
+    const numericValue = value === '' ? '' : Number(value)
+    setData(prevData => {
+      const updatedData = {
         ...prevData,
-        [name]: value === '' ? '' : Number(value) , // Update only the changed field
-    }));
-};
+        [name]: numericValue
+      };
+  
+      if (updatedData.height && updatedData.weight) {
+        const bmiVal = calculateBmi(updatedData.height, updatedData.weight);
+        updatedData.bmi = bmiVal;
+      }
+  
+      return updatedData;
+    });
+  }
 
 const handleSubmit = (event) => {
   event.preventDefault()
   console.log("Submitted Data:", data)
   calculateBmi(data.height, data.weight)
   setIndividual(prevList => [...prevList, data])
+  // setData({age: '', height: '', weight: '', bmi: ''})
   console.log(individual)
+  
 }
   return (
     <>
