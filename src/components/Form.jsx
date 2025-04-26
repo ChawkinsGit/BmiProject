@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const Form = () => {
-  const [data, setData] = useState({age: '', height: '', weight: '', bmi: ''})
+  const [data, setData] = useState({age: '', height: '', weight: '', bmi: '', category: ''})
   const [individual, setIndividual] = useState([])
   const calculateBmi = (height, weight) => {
     let bmi 
@@ -13,6 +13,25 @@ export const Form = () => {
     bmi = (weight / (height * height)) 
     let roundedBmi = Math.round(bmi * 10) / 10 
     return roundedBmi
+  }
+
+  const bmiCategory = (bmi) => {
+    switch (true) {
+      case (bmi < 18.5):
+        return 'Your Bmi suggests you are Underweight';
+  
+      case (bmi >= 18.5 && bmi < 24.9):
+        return 'Your Bmi suggests you are a Healthy Weight';
+  
+      case (bmi >= 25 && bmi < 25.9):
+        return 'Your Bmi suggests you are Overweight';
+
+      case (bmi >= 30):
+        return 'Your Bmi suggests you are Obese';
+  
+      default:
+        return 'Error';;
+    }
   }
 
   const handleChange = (event) => {
@@ -26,7 +45,9 @@ export const Form = () => {
   
       if (updatedData.height && updatedData.weight) {
         const bmiVal = calculateBmi(updatedData.height, updatedData.weight);
+        const category = bmiCategory(bmiVal)
         updatedData.bmi = bmiVal;
+        updatedData.category = category
       }
   
       return updatedData;
@@ -38,7 +59,7 @@ const handleSubmit = (event) => {
   console.log("Submitted Data:", data)
   calculateBmi(data.height, data.weight)
   setIndividual(prevList => [...prevList, data])
-  // setData({age: '', height: '', weight: '', bmi: ''})
+
   console.log(individual)
   
 }
@@ -76,7 +97,18 @@ const handleSubmit = (event) => {
           <button onClick={calculateBmi} type="submit" className="btn btn-primary">Caclulate BMI</button>
         </div>
       </form>
+      <div></div>
     <Link to="/"><button>Back Home</button></Link>
+      <h2>Your BMI</h2>
+    {individual.map((person, index) => (
+      <div key={index} style={{ marginBottom: '1rem' }}>
+        <p>Age: {person.age}</p>
+        <p>Height: {person.height} inches</p>
+        <p>Weight: {person.weight} lbs</p>
+        <p>BMI: {person.bmi}</p>
+        <p>Category: {person.category}</p>
+      </div>
+    ))}
     </>
   )
 }
