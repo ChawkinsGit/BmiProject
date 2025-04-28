@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 export const Form = () => {
   const [data, setData] = useState({age: '', height: '', weight: '', bmi: '', category: ''})
   const [individual, setIndividual] = useState([])
+  const [currentIndividual, setCurrentIndividual] = useState(null);  // displays CURRENT info
   const calculateBmi = (height, weight) => {
     let bmi 
     height = (height / 39.37)
@@ -54,14 +55,20 @@ export const Form = () => {
     });
   }
 
-const handleSubmit = (event) => {
-  event.preventDefault()
-  console.log("Submitted Data:", data)
+const handleSubmit = () => {
+  const newIndividual = {
+    ...data,
+  };
+  setCurrentIndividual(newIndividual); 
+  
   calculateBmi(data.height, data.weight)
   setIndividual(prevList => [...prevList, data])
 
+
+ 
+
   console.log(individual)
-  
+  console.log("Submitted Data:", data)
 }
   return (
     <>
@@ -100,15 +107,16 @@ const handleSubmit = (event) => {
       <div></div>
     <Link to="/"><button>Back Home</button></Link>
       <h2>Your BMI</h2>
-    {individual.map((person, index) => (
-      <div key={index} style={{ marginBottom: '1rem' }}>
-        <p>Age: {person.age}</p>
-        <p>Height: {person.height} inches</p>
-        <p>Weight: {person.weight} lbs</p>
-        <p>BMI: {person.bmi}</p>
-        <p>Category: {person.category}</p>
-      </div>
-    ))}
+      {currentIndividual && (
+        <div>
+          <h2>Current Individual</h2>
+          <p>Age: {currentIndividual.age}</p>
+          <p>Height: {currentIndividual.height} inches</p>
+          <p>Weight: {currentIndividual.weight} lbs</p>
+          <p>BMI: {currentIndividual.bmi}</p>
+          <p>Category: {currentIndividual.category}</p>
+        </div>
+      )}
     </>
   )
 }
