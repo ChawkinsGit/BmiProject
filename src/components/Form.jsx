@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const Form = () => {
-  const [data, setData] = useState({age: '', height: '', weight: '', bmi: '', category: ''})
+  const [data, setData] = useState({name: '', age: '', height: '', weight: '', bmi: '', category: ''})
   const [individual, setIndividual] = useState([])
+  const [showAll, setShowAll] = useState(false)
   const [currentIndividual, setCurrentIndividual] = useState(null);  // displays CURRENT info
   const calculateBmi = (height, weight) => {
     let bmi 
@@ -55,7 +56,8 @@ export const Form = () => {
     });
   }
 
-const handleSubmit = () => {
+const handleSubmit = (event) => {
+  event.preventDefault()
   const newIndividual = {
     ...data,
   };
@@ -73,13 +75,22 @@ const handleSubmit = () => {
   return (
     <>
       <form className="row g-3" onSubmit={handleSubmit}>
+      <div className="col-md-6">
+          <label htmlFor="inputEmail4" className="form-label">Name</label>
+          <input type="email" className="form-control" id="inputName" placeholder="Enter Name"
+                name='name'
+                value={data.name} 
+                onChange={handleChange}  
+          />
+        </div>
+
         <div className="col-md-6">
           <label htmlFor="inputEmail4" className="form-label">Age</label>
           <input type="number" className="form-control" id="inputEmail4" placeholder="Enter Age"
                 name='age'
                 value={data.age} 
                 onChange={handleChange}  
-/>
+          />
         </div>
         <div className="col-md-6">
           <label htmlFor="inputPassword4" className="form-label">Height</label>
@@ -109,12 +120,31 @@ const handleSubmit = () => {
       <h2>Your BMI</h2>
       {currentIndividual && (
         <div>
-          <h2>Current Individual</h2>
           <p>Age: {currentIndividual.age}</p>
           <p>Height: {currentIndividual.height} inches</p>
           <p>Weight: {currentIndividual.weight} lbs</p>
           <p>BMI: {currentIndividual.bmi}</p>
           <p>Category: {currentIndividual.category}</p>
+        </div>
+      )}
+      <button 
+        className="btn btn-secondary my-3" 
+        onClick={() => setShowAll(prev => !prev)}
+      >
+        {showAll ? 'Hide All Entries' : 'Show All Entries'}
+      </button>
+      {showAll && individual.length > 0 && (
+        <div>
+          <h3>All Entries</h3>
+          {individual.map((person, index) => (
+            <div key={index} className="border p-2 mb-2">
+              <p><strong>Age:</strong> {person.age}</p>
+              <p><strong>Height:</strong> {person.height} inches</p>
+              <p><strong>Weight:</strong> {person.weight} lbs</p>
+              <p><strong>BMI:</strong> {person.bmi}</p>
+              <p><strong>Category:</strong> {person.category}</p>
+            </div>
+          ))}
         </div>
       )}
     </>
