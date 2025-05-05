@@ -38,11 +38,11 @@ export const Form = () => {
 
   const handleChange = (event) => {
     const { name, value } = event.target; 
-    const numericValue = value === '' ? '' : Number(value)
+    const numericValue = name === 'name' ? value : value === '' ? '' : Number(value);
     setData(prevData => {
       const updatedData = {
         ...prevData,
-        [name]: numericValue
+        [name]: numericValue,
       };
   
       if (updatedData.height && updatedData.weight) {
@@ -77,7 +77,7 @@ const handleSubmit = (event) => {
       <form className="row g-3" onSubmit={handleSubmit}>
       <div className="col-md-6">
           <label htmlFor="inputEmail4" className="form-label">Name</label>
-          <input type="email" className="form-control" id="inputName" placeholder="Enter Name"
+          <input type="text" className="form-control" id="inputName" placeholder="Enter Name"
                 name='name'
                 value={data.name} 
                 onChange={handleChange}  
@@ -120,6 +120,7 @@ const handleSubmit = (event) => {
       <h2>Your BMI</h2>
       {currentIndividual && (
         <div>
+          <p>Name: {currentIndividual.name}</p>
           <p>Age: {currentIndividual.age}</p>
           <p>Height: {currentIndividual.height} inches</p>
           <p>Weight: {currentIndividual.weight} lbs</p>
@@ -138,6 +139,7 @@ const handleSubmit = (event) => {
           <h3>All Entries</h3>
           {individual.map((person, index) => (
             <div key={index} className="border p-2 mb-2">
+              <p><strong>Name:</strong> {person.name}</p>
               <p><strong>Age:</strong> {person.age}</p>
               <p><strong>Height:</strong> {person.height} inches</p>
               <p><strong>Weight:</strong> {person.weight} lbs</p>
