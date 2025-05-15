@@ -6,7 +6,8 @@ export const Form = () => {
   const [data, setData] = useState({name: '', age: '', height: '', weight: '', bmi: '', category: ''})
   const [individual, setIndividual] = useState([])
   const [showAll, setShowAll] = useState(false)
-  const [currentIndividual, setCurrentIndividual] = useState(null);  // displays CURRENT info
+  const [currentIndividual, setCurrentIndividual] = useState(null)
+  const [formError, setFormError] = useState('');;  // displays CURRENT info
   const calculateBmi = (height, weight) => {
     let bmi 
     height = (height / 39.37)
@@ -57,10 +58,36 @@ export const Form = () => {
   }
 
 const handleSubmit = (event) => {
+  let checkDup = individual.some((curData) => curData.name === data.name && curData.age === data.age && curData.height === data.height && curData.weight === data.weight) 
   event.preventDefault()
+
+  if (
+    !data.name ||
+    data.age === '' ||
+    data.height === '' ||
+    data.weight === ''
+  ) {
+    setFormError('Please fill out all fields before submitting.');
+    
+    setTimeout(() => {
+      setFormError('')
+    }, 4000)
+    ; // clear any previous error
+    return
+  ;
+  }
+  if(checkDup) {
+    setFormError('This info has already been entered.')
+    setTimeout(() => {
+      setFormError('')
+    }, 4000)
+    return
+  }
   const newIndividual = {
     ...data,
   };
+  
+
   setCurrentIndividual(newIndividual); 
   
   calculateBmi(data.height, data.weight)
@@ -74,6 +101,7 @@ const handleSubmit = (event) => {
 }
   return (
     <>
+    {formError && <div className="alert alert-danger">{formError}</div>}
       <form className="row g-3" onSubmit={handleSubmit}>
       <div className="col-md-6">
           <label htmlFor="inputEmail4" className="form-label">Name</label>
