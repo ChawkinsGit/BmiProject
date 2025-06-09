@@ -1,4 +1,4 @@
-import { useState, } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -36,6 +36,16 @@ export const Form = () => {
         return 'Error';;
     }
   }
+  useEffect(() => {
+    const savedIndividuals = localStorage.getItem('individualList');
+    if (savedIndividuals) {
+      setIndividual(JSON.parse(savedIndividuals));
+    }
+  }, []);
+
+  useEffect(() =>{
+    localStorage.setItem('individualList', JSON.stringify(individual))
+  }, [individual])
 
   const handleChange = (event) => {
     const { name, value } = event.target; 
@@ -57,128 +67,171 @@ export const Form = () => {
     });
   }
 
-const handleSubmit = (event) => {
-  let checkDup = individual.some((curData) => curData.name === data.name && curData.age === data.age && curData.height === data.height && curData.weight === data.weight) 
-  event.preventDefault()
-
-  if (
-    !data.name ||
-    data.age === '' ||
-    data.height === '' ||
-    data.weight === ''
-  ) {
-    setFormError('Please fill out all fields before submitting.');
-    
-    setTimeout(() => {
-      setFormError('')
-    }, 4000)
-    ; // clear any previous error
-    return
-  ;
-  }
-  if(checkDup) {
-    setFormError('This info has already been entered.')
-    setTimeout(() => {
-      setFormError('')
-    }, 4000)
-    return
-  }
-  const newIndividual = {
-    ...data,
+  const handleDelete = (indexToDelete) => {
+    setIndividual(prevList => 
+      prevList.filter((_, index) => index !== indexToDelete)
+    );
   };
-  
 
-  setCurrentIndividual(newIndividual); 
-  
-  calculateBmi(data.height, data.weight)
-  setIndividual(prevList => [...prevList, data])
+  const handleSubmit = (event) => {
+    let checkDup = individual.some((curData) => curData.name === data.name && curData.age === data.age && curData.height === data.height && curData.weight === data.weight) 
+    event.preventDefault()
 
+    if (
+      !data.name ||
+      data.age === '' ||
+      data.height === '' ||
+      data.weight === ''
+    ) {
+      setFormError('Please fill out all fields before submitting.');
+      
+      setTimeout(() => {
+        setFormError('')
+      }, 4000)
+      ; // clear any previous error
+      return
+    ;
+    }
+    if(checkDup) {
+      setFormError('This info has already been entered.')
+      setTimeout(() => {
+        setFormError('')
+      }, 4000)
+      return
+    }
+    const newIndividual = {
+      ...data,
+    };
 
- 
+    setCurrentIndividual(newIndividual); 
+    
+    calculateBmi(data.height, data.weight)
+    setIndividual(prevList => [...prevList, data])
 
-  console.log(individual)
-  console.log("Submitted Data:", data)
-}
+    localStorage.setItem(individual)
+
+    console.log(individual)
+    console.log("Submitted Data:", data)
+  }
   return (
-    <>
-    {formError && <div className="alert alert-danger">{formError}</div>}
-      <form className="row g-3" onSubmit={handleSubmit}>
-      <div className="col-md-6">
-          <label htmlFor="inputEmail4" className="form-label">Name</label>
-          <input type="text" className="form-control" id="inputName" placeholder="Enter Name"
-                name='name'
-                value={data.name} 
-                onChange={handleChange}  
-          />
-        </div>
+  
+  <div className="container-fluid d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
 
-        <div className="col-md-6">
-          <label htmlFor="inputEmail4" className="form-label">Age</label>
-          <input type="number" className="form-control" id="inputEmail4" placeholder="Enter Age"
-                name='age'
-                value={data.age} 
-                onChange={handleChange}  
-          />
-        </div>
-        <div className="col-md-6">
-          <label htmlFor="inputPassword4" className="form-label">Height</label>
-          <input type="number" className="form-control" id="inputPassword4"     placeholder="Enter Height(In Inches)"
-                name='height'
-                value={data.height} 
-                onChange={handleChange}  
-          />
-        </div>
-        <div className="col-12">
-          <label htmlFor="inputAddress" className="form-label">Weight</label>
-          <input type="number" className="form-control" id="inputAddress" placeholder="Enter Weight(lb)" 
-                name='weight'
-                value={data.weight} 
-                onChange={handleChange}  
-          />
-        </div>
-        
-       
-        
-        <div className="col-12">
-          <button onClick={calculateBmi} type="submit" className="btn btn-primary">Caclulate BMI</button>
-        </div>
-      </form>
-      <div></div>
-    <Link to="/"><button>Back Home</button></Link>
+    {formError && (
+      <div className="alert alert-danger w-100 text-center">{formError}</div>
+    )}
+
+    <form
+      className="row g-3 justify-content-center p-4 border rounded bg-white shadow w-100"
+      style={{ maxWidth: '1000px' }}
+      onSubmit={handleSubmit}
+    >
+      <div className="col-md-6">
+        <label htmlFor="inputName" className="form-label">Name</label>
+        <input
+          type="text"
+          className="form-control"
+          id="inputName"
+          placeholder="Enter Name"
+          name="name"
+          value={data.name}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="inputAge" className="form-label">Age</label>
+        <input
+          type="number"
+          className="form-control"
+          id="inputAge"
+          placeholder="Enter Age"
+          name="age"
+          value={data.age}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="inputHeight" className="form-label">Height</label>
+        <input
+          type="number"
+          className="form-control"
+          id="inputHeight"
+          placeholder="Enter Height (in inches)"
+          name="height"
+          value={data.height}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="col-md-6">
+        <label htmlFor="inputWeight" className="form-label">Weight</label>
+        <input
+          type="number"
+          className="form-control"
+          id="inputWeight"
+          placeholder="Enter Weight (lbs)"
+          name="weight"
+          value={data.weight}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="col-12 text-center mt-3">
+        <button type="submit" className="btn btn-primary me-2">Calculate BMI</button>
+        <Link to="/">
+          <button type="button" className="btn btn-secondary">Back Home</button>
+        </Link>
+      </div>
+    </form>
+
+    <div className="w-100 text-center mt-4" style={{ maxWidth: '1000px' }}>
       <h2>Your BMI</h2>
       {currentIndividual && (
         <div>
-          <p>Name: {currentIndividual.name}</p>
-          <p>Age: {currentIndividual.age}</p>
-          <p>Height: {currentIndividual.height} inches</p>
-          <p>Weight: {currentIndividual.weight} lbs</p>
-          <p>BMI: {currentIndividual.bmi}</p>
-          <p>Category: {currentIndividual.category}</p>
+          <p><strong>Name:</strong> {currentIndividual.name}</p>
+          <p><strong>Age:</strong> {currentIndividual.age}</p>
+          <p><strong>Height:</strong> {currentIndividual.height} inches</p>
+          <p><strong>Weight:</strong> {currentIndividual.weight} lbs</p>
+          <p><strong>BMI:</strong> {currentIndividual.bmi}</p>
+          <p><strong>Category:</strong> {currentIndividual.category}</p>
         </div>
       )}
+
       <button 
         className="btn btn-secondary my-3" 
         onClick={() => setShowAll(prev => !prev)}
       >
         {showAll ? 'Hide All Entries' : 'Show All Entries'}
       </button>
+
       {showAll && individual.length > 0 && (
-        <div>
+        <div className="mt-2">
           <h3>All Entries</h3>
           {individual.map((person, index) => (
-            <div key={index} className="border p-2 mb-2">
+            <div key={index} className="border p-2 mb-2 text-start">
               <p><strong>Name:</strong> {person.name}</p>
               <p><strong>Age:</strong> {person.age}</p>
               <p><strong>Height:</strong> {person.height} inches</p>
               <p><strong>Weight:</strong> {person.weight} lbs</p>
               <p><strong>BMI:</strong> {person.bmi}</p>
               <p><strong>Category:</strong> {person.category}</p>
+              <button className="btn btn-danger" onClick={() => handleDelete(index)}>
+                Delete
+              </button>
             </div>
           ))}
         </div>
       )}
-    </>
-  )
+    </div>
+  </div>
+
+  
+);
+
+
+
 }
 
 export default Form
